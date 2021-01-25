@@ -1,6 +1,6 @@
 # The Brief:
 
-React Native app for viewing statistical data relating to the COVID-19 disease. This is my first attempt at any cross-platform framework. I attempted to re-write my other COVID-Tracker app built in Kotlin for Android, which can be found [here](https://github.com/FabianTauriello/COVID-Tracker).
+React Native app for viewing statistical data relating to the COVID-19 disease. This is my first attempt at any cross-platform framework for building mobile apps. I attempted to re-write my other COVID-Tracker app built in Kotlin for Android, which can be found [here](https://github.com/FabianTauriello/COVID-Tracker).
 
 ## Description
 
