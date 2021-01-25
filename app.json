@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "COVIDTracker",
+    "name": "COVID Tracker",
     "slug": "COVIDTracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -29,6 +31,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "React Native app for viewing statistical data relating to the COVID-19 disease. ",
+    "githubUrl": "https://github.com/FabianTauriello/COVID-Tracker-React-Native"
   }
 }
