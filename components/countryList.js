@@ -22,6 +22,7 @@ export default function CountryList({ navigation }) {
 
   // fetch all country data from api and update state
   useEffect(() => {
+    // summary data for a country
     fetch("https://api.covid19api.com/summary")
       .then((response) => response.json())
       .then((json) => {
