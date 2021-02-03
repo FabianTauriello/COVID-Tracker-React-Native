@@ -17,12 +17,6 @@ export default function CountryStats({ navigation, route }) {
     const formattedFromDate = fromDate.toISOString().split(".")[0] + "Z";
     const formattedToDate = toDate.toISOString().split(".")[0] + "Z";
 
-    console.log(formattedFromDate);
-    console.log(formattedToDate);
-    console.log(
-      `https://api.covid19api.com/total/country/${route.params.countrySelected.Slug}/status/confirmed?from=${formattedFromDate}&to=${formattedToDate}`
-    );
-
     // fetch 30 days of data for selected country
     fetch(
       `https://api.covid19api.com/total/country/${route.params.countrySelected.Slug}/status/confirmed?from=${formattedFromDate}&to=${formattedToDate}`

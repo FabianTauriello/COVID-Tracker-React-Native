@@ -19,6 +19,7 @@ export default function GlobalStats({ navigation }) {
         const startIndex = json.length - 7;
         const endIndex = json.length;
         const newCasesForWeek = json.slice(startIndex, endIndex);
+        console.log(json);
         setGlobalNewCasesData(newCasesForWeek);
       })
       .catch((error) => console.error(error));

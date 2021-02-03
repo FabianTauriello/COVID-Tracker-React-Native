@@ -3,11 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Svg, G, Rect, Line, Text as SvgText } from "react-native-svg";
 import * as d3 from "d3";
 import { formatYTickLabel } from "../utils/helperFunctions";
-
-function called(item) {
-  console.log("called for item...");
-  console.log(item);
-}
+import { Animate } from "react-move";
 
 // retrieve the first 3 letters from a date
 function getDayOfWeek(item) {
