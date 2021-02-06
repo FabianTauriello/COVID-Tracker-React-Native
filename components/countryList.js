@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchBar } from "react-native-elements";
+import CustomButton from "./customButton";
 import {
   TouchableOpacity,
   Text,
@@ -19,19 +20,33 @@ export default function CountryList({ navigation }) {
   const [countryFilteredListData, setFilteredListData] = useState([]);
   // search query text
   const [searchText, setSearchTextData] = useState("");
+  // error message
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // fetch all country data from api and update state
-  useEffect(() => {
-    // summary data for a country
+  // this is called on initialization and repeated when the user clicks the retry button
+  const fetchData = () => {
+    setLoading(true);
     fetch("https://api.covid19api.com/summary")
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw Error("Failed to fetch data");
+        }
+
+        setError("");
+        return response.json();
+      })
       .then((json) => {
         setListData(json.Countries);
         setFilteredListData(json.Countries);
       })
-      .catch((error) => console.error(error))
+      .catch((error) => setError(error.message))
       .finally(() => setLoading(false));
-  }, []);
+  };
 
   // handle click of an individual country - navigate to country stats screen, passing in country object as param
   const searchByCountryBtnHandler = (country) => {
@@ -75,25 +90,43 @@ export default function CountryList({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <SearchBar
-        value={searchText}
-        placeholder="Search for a country"
-        onChangeText={searchByCountryTextChangeHandler}
-        containerStyle={styles.searchContainerStyle}
-        lightTheme
-      />
-      <CountryList />
-      <View style={styles.activityIndicatorContainer}>
-        <ActivityIndicator color="blue" animating={isLoading} size={"large"} />
-      </View>
+    <SafeAreaView>
+      {isLoading && (
+        <View style={[styles.activityIndicatorContainer]}>
+          <ActivityIndicator
+            color="blue"
+            animating={isLoading}
+            size={"large"}
+          />
+        </View>
+      )}
+      {!error.length == 0 && (
+        <View style={styles.container}>
+          <Text>{error}</Text>
+          <Text>Please try again</Text>
+          <CustomButton text="RETRY" handlePress={fetchData} />
+        </View>
+      )}
+      {error.length == 0 && (
+        <View style={styles.container}>
+          <SearchBar
+            value={searchText}
+            placeholder="Search for a country"
+            onChangeText={searchByCountryTextChangeHandler}
+            containerStyle={styles.searchContainerStyle}
+            lightTheme
+          />
+          <CountryList />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: "100%",
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -115,5 +148,8 @@ const styles = StyleSheet.create({
   },
   activityIndicatorContainer: {
     position: "absolute",
+    left: 0,
+    right: 0,
+    top: 100,
   },
 });

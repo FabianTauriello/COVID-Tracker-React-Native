@@ -1,13 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import CustomButton from "./customButton";
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import DataRow from "./dataRow";
 import LineChart from "./lineChart";
 
 // component to display covid data for one country
 export default function CountryStats({ navigation, route }) {
   const [newCasesFor30DayPeriod, setData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  // fetch 30 days of data for selected country
+  const fetchData = () => {
+    setLoading(true);
+
     // get dates for fetch request
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - 32);
@@ -17,16 +34,23 @@ export default function CountryStats({ navigation, route }) {
     const formattedFromDate = fromDate.toISOString().split(".")[0] + "Z";
     const formattedToDate = toDate.toISOString().split(".")[0] + "Z";
 
-    // fetch 30 days of data for selected country
     fetch(
       `https://api.covid19api.com/total/country/${route.params.countrySelected.Slug}/status/confirmed?from=${formattedFromDate}&to=${formattedToDate}`
     )
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw Error("Failed to fetch data");
+        }
+
+        setError("");
+        return response.json();
+      })
       .then((json) => {
         setData(json);
       })
-      .catch((error) => console.error(error));
-  }, []);
+      .catch((error) => setError(error.message))
+      .finally(() => setLoading(false));
+  };
 
   const {
     TotalConfirmed,
@@ -38,9 +62,25 @@ export default function CountryStats({ navigation, route }) {
   } = route.params.countrySelected;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
+      {isLoading && (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator
+            color="blue"
+            animating={isLoading}
+            size={"large"}
+          />
+        </View>
+      )}
       <ScrollView style={styles.scrollview}>
-        <LineChart data={newCasesFor30DayPeriod} />
+        {!error.length == 0 && (
+          <View style={styles.errorContainer}>
+            <Text>{error}</Text>
+            <Text>Graph could no be shown. Please try again</Text>
+            <CustomButton text="RETRY" handlePress={fetchData} />
+          </View>
+        )}
+        {error.length == 0 && <LineChart data={newCasesFor30DayPeriod} />}
         <DataRow
           firstTitle="Total Cases"
           secondTitle="New Cases"
@@ -67,8 +107,15 @@ export default function CountryStats({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  errorContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   scrollview: {
+    marginTop: 15,
+  },
+  activityIndicatorContainer: {
     marginTop: 15,
   },
 });
