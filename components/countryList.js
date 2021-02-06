@@ -47,7 +47,7 @@ export default function CountryList({ navigation }) {
 
     // match the search query with items in the full list
     const arrayRes = countryListData.filter((item) =>
-      item.Country.includes(text)
+      item.Country.toLowerCase().includes(text.toLowerCase())
     );
 
     // update the filtered list with the items matched
