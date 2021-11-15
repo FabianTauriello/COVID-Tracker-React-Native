@@ -13,14 +13,34 @@ export default function LineChart(props) {
   // set up data
   // 31 objects passed into props so I can calculate the difference between each day,
   // and insert them into a new data array with 30 objects
-  const data = [];
+  const newCases = [];
   props.data.forEach((item, index) => {
     // skip first day
     if (index != 0) {
-      data.push({
+      newCases.push({
         date: item.Date,
         // calculate the difference between current day and previous day
         cases: Math.abs(props.data[index - 1].Cases - item.Cases),
+      });
+    }
+  });
+
+  const data = [];
+  newCases.forEach((value, index, array) => {
+    if (index >= 6) {
+      // calculate 7-day average for chart
+      const sum =
+        value.cases +
+        array[index - 1].cases +
+        array[index - 2].cases +
+        array[index - 3].cases +
+        array[index - 4].cases +
+        array[index - 5].cases +
+        array[index - 6].cases;
+      const avg = Math.round(sum / 7);
+      data.push({
+        date: value.date,
+        cases: avg,
       });
     }
   });
@@ -32,15 +52,15 @@ export default function LineChart(props) {
   const graphHeight = 150;
 
   // X scale
-  const xDomain = data.map((item) => item.date);
+  const xDomain = data.map(item => item.date);
   const xRange = [0, graphWidth];
   const xScale = d3.scaleBand().domain(xDomain).range(xRange);
 
   // Y scale
-  const minTemp = d3.min(data, (d) => d.cases);
+  const minTemp = d3.min(data, d => d.cases);
   const numberToDeduct = minTemp * 0.1;
   const min = minTemp - numberToDeduct; // minus 10% from min instead of starting domain at 0
-  const max = d3.max(data, (d) => d.cases) * 1.1; // add 10% to leave some room above highest bar
+  const max = d3.max(data, d => d.cases) * 1.1; // add 10% to leave some room above highest bar
   const yDomain = [min, max];
   const yRange = [graphHeight, 0];
   const yScale = d3.scaleLinear().domain(yDomain).range(yRange);
@@ -56,16 +76,18 @@ export default function LineChart(props) {
   // path function
   const line = d3
     .line()
-    .x((d) => xScale(d.date))
-    .y((d) => yScale(d.cases));
+    .x(d => xScale(d.date))
+    .y(d => yScale(d.cases));
 
   return (
-    <View>
-      <Text style={styles.title}>Daily New Cases for 30 days</Text>
-      <Svg width={SVGWidth} height={SVGHeight}>
+    <View style={{ zIndex: 1 }}>
+      <Text style={[styles.title, { zIndex: 1 }]}>
+        Daily New Cases for 30 days
+      </Text>
+      <Svg width={SVGWidth} height={SVGHeight} style={{ zIndex: 10 }}>
         <G y={0} x={50} fill="black">
           {/* y axis ticks */}
-          {yTicks.map((tick) => {
+          {yTicks.map(tick => {
             return (
               <Line
                 key={tick}
@@ -79,7 +101,7 @@ export default function LineChart(props) {
             );
           })}
           {/* y axis tick labels */}
-          {yTicks.map((tick) => {
+          {yTicks.map(tick => {
             return (
               <SvgText
                 key={tick}

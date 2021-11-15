@@ -27,17 +27,22 @@ export default function CountryStats({ navigation, route }) {
 
     // get dates for fetch request
     const fromDate = new Date();
-    fromDate.setDate(fromDate.getDate() - 32);
+    fromDate.setDate(fromDate.getDate() - 38); // was 32
     const toDate = new Date();
     toDate.setDate(toDate.getDate() - 1);
 
     const formattedFromDate = fromDate.toISOString().split(".")[0] + "Z";
     const formattedToDate = toDate.toISOString().split(".")[0] + "Z";
 
+    console.log("searching with query:");
+    console.log(
+      `https://api.covid19api.com/total/country/${route.params.countrySelected.Slug}/status/confirmed?from=${formattedFromDate}&to=${formattedToDate}`
+    );
+
     fetch(
       `https://api.covid19api.com/total/country/${route.params.countrySelected.Slug}/status/confirmed?from=${formattedFromDate}&to=${formattedToDate}`
     )
-      .then((response) => {
+      .then(response => {
         if (!response.ok) {
           throw Error("Failed to fetch data");
         }
@@ -45,10 +50,10 @@ export default function CountryStats({ navigation, route }) {
         setError("");
         return response.json();
       })
-      .then((json) => {
+      .then(json => {
         setData(json);
       })
-      .catch((error) => setError(error.message))
+      .catch(error => setError(error.message))
       .finally(() => setLoading(false));
   };
 

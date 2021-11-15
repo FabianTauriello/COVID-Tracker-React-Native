@@ -32,7 +32,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "React Native app for viewing statistical data relating to the COVID-19 disease. ",
-    "githubUrl": "https://github.com/FabianTauriello/COVID-Tracker-React-Native"
+    "description": "React Native app for viewing statistical data relating to the COVID-19 disease. "
   }
 }
